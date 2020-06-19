@@ -1,0 +1,73 @@
+form: triangle | circle | square
+size: small | medium | big
+color: red | blue | green
+
+
+shape: "form" form {"size", size} {"color", color}
+
+sequence: shape = shape | shape + shape + shape
+
+// sequence of 2 elements: 2 identical shapes
+q0:
+  aS -> aa   // a = shape
+
+// sequences of 3 elements
+q1: 1_attr_var
+  var_color:            form size color_1, form size color_2, form size color_3   form size color3     0 0 3       0 0 6
+                        form color_1, form color_2, form color_3
+  var_size:             form size_1 color, form size_2 color, form size_3 color
+                        form size_1, form size_2, form size_3
+  var_form:             form1 size color, form2 size color, form3 size color
+                        form1 size, form2 size, form3 size
+                        form1 color, form2 color, form3 color
+
+
+
+q2: 2_attr_var
+  var_color_size:       form size_j1 color_k1, form size_j2 color_k2, form size_j3 color_k3
+  var_size_form:        form_i1 size_j1 color, form_i2 size_j2 color, form_i3 size_j3 color
+  var_form_color:       form_i1 size color_k1, form_i2 size color_k2, form_i3 size color_k3
+
+q3: 3_atrr_var
+  var_color_size_form:  form_i1 size_j1 color_k1, form_i2 size_j2 color_k2, form_i3 size_j3 color_k3
+
+games:
+  create an identical shape (q0)
+  put in a hole of a form, size, color the proper shape of those given (q0)
+  complete with the third shape when 2 are given (q1, q2, q3)
+
+
+form square color red, form square color green, form square red
+
+
+Grammar:
+
+We have shapes: square, triangle, circle
+We have borders: square, triangle, circle
+For example we can have a small red circle in a big blue border of a square
+Borders and shapes can be small, medium and big, also they can be red, blue, green
+We have lines: straight with inclination oblique(positive or negative based on the direction) horizontal and vertical (the lines also have colors)
+
+We join the parts of a figure using "&" Ex: form square & line straight inclination oblique_pos & line straight inclination oblique_neg (a square with 2 diagonals)
+We use "=" to check equalty
+We use "+" to add two figures Ex: form square & line straight inclination oblique_pos + line straight inclination oblique_neg = form square & line straight inclination oblique_pos & line straight inclination oblique_neg
+We use "-" to substract elements of a figure Ex: form square & line straight inclination oblique_pos - line straight inclination oblique_pos = form sqaure
+
+More examples:
+form square color red size small & line straight color red inclination oblique_pos & line straight color red inclination oblique_neg - square color red size small = 
+line straight color red inclination oblique_pos & line straight color red inclination oblique_neg
+(if it is impossible to subsract an error is raised)
+
+border square color red size medium & line straight color red inclination oblique_pos & line straight color red inclination oblique_neg + 
+form circle color red size medium =
+form circle color red size medium & line straight color red inclination oblique_neg & line straight color red inclination oblique_pos & border square color red size medium;
+
+Games:
+1.  We have n shapes, arranged in circle. In the middle a black hole with colorful border(red green or blue). 
+    The child has to choose one of the shape to put in the hole, based on border color, shape and size. (We can set time limit, like a few seconds for this)
+2.  We have an expression, Ex:  big square + small square = medium square
+                                big circle with 2 oblique lines -  big circle = 2 oblique lines
+    The child has the expression in front, and uses the menu to create the shape that is the answer.
+    The expressions can become longer while advancing in levels.
+    We now use shapes and lines(oblique, vertically or horizontal, maybe add something later)
+3.  Memory challenge. We put a sequence of shapes, then we shuffle them and the child has to re-arange them

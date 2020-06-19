@@ -1,4 +1,4 @@
-import { IStream } from './contracts/stream';
+import { IStream } from '../contracts/stream';
 
 export function InputStream(input: string): IStream {
   let pos = 0, line = 1, col = 0;
@@ -49,7 +49,7 @@ export function TokenStream(raw_input: string): IStream {
   }
 
   function is_id(ch: string) {
-    return is_id_start(ch) || "?!-<>=0123456789".indexOf(ch) >= 0;
+    return is_id_start(ch) || "0123456789".indexOf(ch) >= 0;
   }
 
   function is_op_char(ch: string) {
@@ -76,27 +76,6 @@ export function TokenStream(raw_input: string): IStream {
     };
   }
 
-  function read_escaped(end: string) {
-    var escaped = false, str = "";
-    input.next();
-    while (!input.eof()) {
-      var ch = input.next();
-      if (escaped) {
-        str += ch;
-        escaped = false;
-      } else if (ch == "\\") {
-        escaped = true;
-      } else if (ch == end) {
-        break;
-      } else {
-        str += ch;
-      }
-    }
-    return str;
-  }
-  function read_string() {
-    return { type: "str", value: read_escaped('"') };
-  }
   function skip_comment() {
     read_while((ch: string) => { return ch != "\n" });
     input.next();
@@ -104,24 +83,34 @@ export function TokenStream(raw_input: string): IStream {
 
   function read_next() {
     read_while(is_whitespace);
-    if (input.eof()) return null;
+
+    if (input.eof()) {
+      return null;
+    }
+
     var ch = input.peek();
     if (ch == "#") {
       skip_comment();
       return read_next();
     }
-    if (ch == '"') return read_string();
-    if (is_id_start(ch)) return read_ident();
-    if (is_punc(ch)) return {
-      type: "punc",
-      value: input.next()
-    };
-    if (is_op_char(ch)) return {
-      type: "op",
-      value: read_while(is_op_char)
-    };
+    if (is_id_start(ch)) {
+      return read_ident();
+    }
+    if (is_punc(ch)) {
+      return {
+        type: "punc",
+        value: input.next()
+      };
+    }
+    if (is_op_char(ch)) {
+      return {
+        type: "op",
+        value: read_while(is_op_char)
+      };
+    }
     input.croak("Can't handle character: " + ch);
   }
+
   function peek() {
     return current || (current = read_next());
   }

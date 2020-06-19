@@ -1,20 +1,28 @@
-import { TokenStream } from './lexer';
-import { parse } from './parser';
-import { interpret } from './interpretator_old';
+import { TokenStream } from './src/lexer';
+import { parse } from './src/parser';
+import { interpret } from './src/interpretator';
+const bodyParser = require("body-parser");
+const express = require('express')
+const cors = require('cors')
+const app = express()
+const port = 3000
 
-const input = "border square color red size medium & line straight color red inclination oblique_pos & line straight color red inclination oblique_neg + form circle color red size medium = form circle color red size medium & line straight color red inclination oblique_neg & line straight color red inclination oblique_pos & border square color red size medium;"
+app.use(cors())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
+app.post('/', (req, res) => {
+  const input = req.body.input;
+  res.send({ msg: compile(input) });
+})
 
-// const lexer = TokenStream(input)
-// while (!lexer.eof()) {
-//   console.log(lexer.next())
-// }
-
-// console.log(parse(TokenStream(input)).prog[0].body);
-
-// console.log(interpret(parse(TokenStream(input))));
+app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
 
 function compile(input: string) {
-  console.log("here")
-  console.log(interpret(parse(TokenStream(input))));
+  try {
+    return interpret(parse(TokenStream(input)));
+  } catch (error) {
+    console.log(error)
+    return false;
+  }
 }

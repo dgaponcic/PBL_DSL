@@ -1,9 +1,9 @@
-import { IStream } from './contracts/stream';
+import { IStream } from '../contracts/stream';
 
 export function parse(input: IStream): any {
   const PRECEDENCE = {
     "=": 1,
-    "+": 10, "-": 10,
+    "+": 10,
     "&": 20,
   };
 
@@ -71,7 +71,6 @@ export function parse(input: IStream): any {
       input.next()
       const color = parse_attribute('color', ['red', 'green', 'blue']);
       if (color) {
-        // attributes.push(color)
         attributes = Object.assign({}, attributes, color);
       }
     }
@@ -80,7 +79,6 @@ export function parse(input: IStream): any {
       input.next()
       const size = parse_attribute('size', ['big', 'medium', 'small']);
       if (size) {
-        // attributes.push(size)
         attributes = Object.assign({}, attributes, size);
       }
     }
@@ -89,7 +87,6 @@ export function parse(input: IStream): any {
       input.next()
       const inclination = parse_attribute('inclination', ['horizontal', 'vertical', 'oblique_pos', 'oblique_min']);
       if (inclination) {
-        // attributes.push(inclination)
         attributes = Object.assign({}, attributes, inclination);
       }
     }

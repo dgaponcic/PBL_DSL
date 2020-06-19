@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 export function interpret(ast: any) {
 
   return main();
@@ -103,6 +105,8 @@ export function interpret(ast: any) {
   function equals(a, b) {
     a.lines = sort_lines(a.lines);
     b.lines = sort_lines(b.lines);
+    a.lines = _.uniqWith(a.lines, _.isEqual);
+    b.lines = _.uniqWith(b.lines, _.isEqual);
     if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error('Invalid equal');
     return true;
   }
@@ -125,16 +129,11 @@ export function interpret(ast: any) {
     return res;
   }
 
-  function diff(a, b) {
-
-  }
-
   function apply_op(op: any, a: any, b: any) {
     switch (op) {
       case "+": return add_expr(a, b);
       case "&": return concat_expr(a, b);
       case "=": return equals(a, b);
-      case "-": return diff(a, b);
     }
     throw new Error("Can't apply operator " + op);
   }
